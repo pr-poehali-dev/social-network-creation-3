@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
+import ImageUpload from '@/components/ImageUpload';
 import { toast } from 'sonner';
 
 interface Post {
@@ -32,6 +33,7 @@ const Home = () => {
   const { user, sessionToken, logout, isAuthenticated } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPostContent, setNewPostContent] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
 
@@ -64,7 +66,7 @@ const Home = () => {
   };
 
   const createPost = async () => {
-    if (!newPostContent.trim() || !sessionToken) return;
+    if ((!newPostContent.trim() && !selectedImage) || !sessionToken) return;
 
     setCreating(true);
     try {
@@ -74,11 +76,15 @@ const Home = () => {
           'Content-Type': 'application/json',
           'X-Auth-Token': sessionToken,
         },
-        body: JSON.stringify({ content: newPostContent }),
+        body: JSON.stringify({ 
+          content: newPostContent,
+          image_url: selectedImage 
+        }),
       });
 
       if (response.ok) {
         setNewPostContent('');
+        setSelectedImage('');
         loadPosts();
         toast.success('Пост опубликован!');
       } else {
@@ -170,13 +176,20 @@ const Home = () => {
               onChange={(e) => setNewPostContent(e.target.value)}
               className="mb-4 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
             />
+            
+            <ImageUpload
+              onImageSelect={setSelectedImage}
+              onImageRemove={() => setSelectedImage('')}
+              selectedImage={selectedImage}
+              sessionToken={sessionToken || undefined}
+            />
             <div className="flex justify-between items-center">
               <span className="text-xs sm:text-sm text-gray-500">
                 {newPostContent.length}/500
               </span>
               <Button 
                 onClick={createPost}
-                disabled={!newPostContent.trim() || creating}
+                disabled={(!newPostContent.trim() && !selectedImage) || creating}
                 size="sm"
                 className="text-sm"
               >

@@ -1,0 +1,52 @@
+{
+  "tests": [
+    {
+      "name": "Test unauthorized upload",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD",
+        "filename": "test.jpg"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test image upload with auth",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Auth-Token": "test-token"
+      },
+      "body": {
+        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD",
+        "filename": "test.jpg"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "image_url": "string",
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test upload without image",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Auth-Token": "test-token"
+      },
+      "body": {
+        "filename": "test.jpg"
+      },
+      "expectedStatus": 400,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
