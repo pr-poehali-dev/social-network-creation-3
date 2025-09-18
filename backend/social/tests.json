@@ -1,0 +1,41 @@
+{
+  "tests": [
+    {
+      "name": "Test user search",
+      "method": "GET",
+      "path": "/?action=search&q=test",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "users": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test get user profile",
+      "method": "GET",
+      "path": "/?action=profile&user_id=1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "user": {
+          "username": "string",
+          "full_name": "string"
+        },
+        "posts": "array"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test follow user unauthorized",
+      "method": "POST",
+      "path": "/?action=follow",
+      "body": {
+        "user_id": 1
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

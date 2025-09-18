@@ -1,0 +1,50 @@
+{
+  "tests": [
+    {
+      "name": "Test get posts feed",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "posts": "array",
+        "page": "number",
+        "limit": "number"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test create post",
+      "method": "POST",
+      "path": "/?action=create",
+      "headers": {
+        "X-Auth-Token": "test-token"
+      },
+      "body": {
+        "content": "Это тестовый пост",
+        "image_url": ""
+      },
+      "expectedStatus": 201,
+      "expectedBody": {
+        "post": {
+          "content": "string",
+          "likes_count": "number"
+        },
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Test unauthorized post creation",
+      "method": "POST",
+      "path": "/?action=create",
+      "body": {
+        "content": "Тест без авторизации"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
