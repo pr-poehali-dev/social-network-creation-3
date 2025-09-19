@@ -28,6 +28,16 @@ def generate_session_token() -> str:
     """Генерация токена сессии"""
     return secrets.token_urlsafe(32)
 
+def serialize_user(user_data: Dict) -> Dict:
+    """Сериализация данных пользователя для JSON"""
+    result = {}
+    for key, value in user_data.items():
+        if isinstance(value, datetime):
+            result[key] = value.isoformat()
+        else:
+            result[key] = value
+    return result
+
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     '''
     Обработка запросов аутентификации
@@ -118,7 +128,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'statusCode': 201,
                 'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
                 'body': json.dumps({
-                    'user': dict(user),
+                    'user': serialize_user(dict(user)),
                     'session_token': session_token,
                     'message': 'Регистрация успешна'
                 })
@@ -169,7 +179,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'statusCode': 200,
                 'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
                 'body': json.dumps({
-                    'user': dict(user),
+                    'user': serialize_user(dict(user)),
                     'session_token': session_token,
                     'message': 'Вход выполнен успешно'
                 })
@@ -225,7 +235,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             return {
                 'statusCode': 200,
                 'headers': {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
-                'body': json.dumps({'user': dict(user)})
+                'body': json.dumps({'user': serialize_user(dict(user))})
             }
         
         else:
